@@ -1,0 +1,196 @@
+basePath: /tagd/api/v1
+definitions:
+  models.Tag:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      pairs:
+        additionalProperties:
+          type: string
+        type: object
+      position:
+        $ref: '#/definitions/models.TagPosition'
+    type: object
+  models.TagPosition:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      key_code:
+        type: string
+      scope:
+        type: string
+      scope_type:
+        description: project/file/function/class
+        type: string
+      subject:
+        type: string
+    type: object
+info:
+  contact:
+    name: Bochun Zheng
+    url: http://zgsm.ai
+  description: Tag Management System
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://zgsm.ai
+  title: Tag Management
+  version: "1.0"
+paths:
+  /tags:
+    get:
+      consumes:
+      - application/json
+      description: Query tag list with conditions
+      parameters:
+      - description: Code scope
+        in: query
+        name: scope
+        type: string
+      - description: Scope type
+        in: query
+        name: scope_type
+        type: string
+      - description: Subject category
+        in: query
+        name: subject
+        type: string
+      - description: Key code segment
+        in: query
+        name: key_code
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Tag'
+            type: array
+      summary: Get tag list
+      tags:
+      - tags
+    post:
+      consumes:
+      - application/json
+      description: Add a new tag
+      parameters:
+      - description: Tag information
+        in: body
+        name: tag
+        required: true
+        schema:
+          $ref: '#/definitions/models.Tag'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Tag'
+      summary: Add new tag
+      tags:
+      - tags
+  /tags/{tagid}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete tag by ID
+      parameters:
+      - description: Tag ID
+        in: path
+        name: tagid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Delete tag
+      tags:
+      - tags
+    get:
+      consumes:
+      - application/json
+      description: Get tag details by ID
+      parameters:
+      - description: Tag ID
+        in: path
+        name: tagid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Tag'
+      summary: Get tag details
+      tags:
+      - tags
+    put:
+      consumes:
+      - application/json
+      description: Update all tag fields
+      parameters:
+      - description: Tag ID
+        in: path
+        name: tagid
+        required: true
+        type: integer
+      - description: Updated tag information
+        in: body
+        name: tag
+        required: true
+        schema:
+          $ref: '#/definitions/models.Tag'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Tag'
+      summary: Update tag
+      tags:
+      - tags
+  /tags/{tagid}/{key}:
+    put:
+      consumes:
+      - application/json
+      description: Update specified key-value pair of the tag
+      parameters:
+      - description: Tag ID
+        in: path
+        name: tagid
+        required: true
+        type: integer
+      - description: Key name
+        in: path
+        name: key
+        required: true
+        type: string
+      - description: New value
+        in: body
+        name: value
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Tag'
+      summary: Update tag key-value pair
+      tags:
+      - tags
+swagger: "2.0"
