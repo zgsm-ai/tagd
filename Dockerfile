@@ -4,7 +4,7 @@ COPY . .
 
 RUN go env -w CGO_ENABLED=0 && \
     go env -w GO111MODULE=on && \
-    go env -w GOPROXY=http://mirrors.sangfor.org/nexus/repository/go-proxy-group,https://goproxy.cn,https://mirrors.aliyun.com/goproxy/,direct  
+    go env -w GOPROXY=https://goproxy.cn,https://mirrors.aliyun.com/goproxy/,direct  
 
 #
 #go env -w GOPROXY=http://mirrors.sangfor.org/nexus/repository/go-proxy-group
