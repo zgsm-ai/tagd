@@ -28,7 +28,7 @@ func NewTagHandler(db *gorm.DB) *TagHandler {
 // @Param subject query string false "Subject category"
 // @Param key_code query string false "Key code segment"
 // @Success 200 {array} models.Tag
-// @Router /tags [get]
+// @Router /v1/tags [get]
 func (h *TagHandler) GetTags(c *gin.Context) {
 	var query models.TagPosition
 	if err := c.ShouldBindQuery(&query); err != nil {
@@ -53,7 +53,7 @@ func (h *TagHandler) GetTags(c *gin.Context) {
 // @Produce json
 // @Param tagid path int true "Tag ID"
 // @Success 200 {object} models.Tag
-// @Router /tags/{tagid} [get]
+// @Router /v1/tags/{tagid} [get]
 func (h *TagHandler) GetTag(c *gin.Context) {
 	id := c.Param("tagid")
 
@@ -74,7 +74,7 @@ func (h *TagHandler) GetTag(c *gin.Context) {
 // @Produce json
 // @Param tag body models.Tag true "Tag information"
 // @Success 201 {object} models.Tag
-// @Router /tags [post]
+// @Router /v1/tags [post]
 func (h *TagHandler) AddTag(c *gin.Context) {
 	var tag models.Tag
 	if err := c.ShouldBindJSON(&tag); err != nil {
@@ -99,7 +99,7 @@ func (h *TagHandler) AddTag(c *gin.Context) {
 // @Param tagid path int true "Tag ID"
 // @Param tag body models.Tag true "Updated tag information"
 // @Success 200 {object} models.Tag
-// @Router /tags/{tagid} [put]
+// @Router /v1/tags/{tagid} [put]
 func (h *TagHandler) UpdateTag(c *gin.Context) {
 	id := c.Param("tagid")
 
@@ -133,7 +133,7 @@ func (h *TagHandler) UpdateTag(c *gin.Context) {
 // @Param key path string true "Key name"
 // @Param value body string true "New value"
 // @Success 200 {object} models.Tag
-// @Router /tags/{tagid}/{key} [put]
+// @Router /v1/tags/{tagid}/{key} [put]
 func (h *TagHandler) UpdateTagPair(c *gin.Context) {
 	id := c.Param("tagid")
 	key := c.Param("key")
@@ -171,7 +171,7 @@ func (h *TagHandler) UpdateTagPair(c *gin.Context) {
 // @Produce json
 // @Param tagid path int true "Tag ID"
 // @Success 204
-// @Router /tags/{tagid} [delete]
+// @Router /v1/tags/{tagid} [delete]
 func (h *TagHandler) DeleteTag(c *gin.Context) {
 	id := c.Param("tagid")
 
