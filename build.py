@@ -29,18 +29,18 @@ def last_commit_id():
 def build_cmd():
     build_flags = []
 
-    build_flags.append("-X 'code.sangfor.org/aip/{0}/cmd.SoftwareVer={1}'".format(opt_app, opt_software))
-    build_flags.append("-X 'code.sangfor.org/aip/{0}/cmd.ProtocolVer={1}'".format(opt_app, opt_protocol))
+    build_flags.append("-X 'main.SoftwareVer={1}'".format(opt_app, opt_software))
+    build_flags.append("-X 'main.ProtocolVer={1}'".format(opt_app, opt_protocol))
     last_git_tag = last_tag()
     if last_git_tag != "":
-        build_flags.append("-X 'code.sangfor.org/aip/{0}/cmd.BuildTag={1}'".format(opt_app, last_git_tag))
+        build_flags.append("-X 'main.BuildTag={1}'".format(opt_app, last_git_tag))
 
     commit_id = last_commit_id()
     if commit_id != "":
-        build_flags.append("-X 'code.sangfor.org/aip/{0}/cmd.BuildCommitId={1}'".format(opt_app, commit_id))
+        build_flags.append("-X 'main.BuildCommitId={1}'".format(opt_app, commit_id))
 
     # current time
-    build_flags.append("-X 'code.sangfor.org/aip/{0}/cmd.BuildTime={1}'".format(opt_app, 
+    build_flags.append("-X 'main.BuildTime={1}'".format(opt_app, 
         time.strftime("%Y-%m-%d %H:%M:%S")))
 
     debug_flag = ""

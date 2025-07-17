@@ -9,6 +9,12 @@ OS     := $(shell go env GOOS)
 ARCH   := $(shell go env GOARCH)
 ENV    := test
 
+SHENMA_DOCKER_REPO  := $(shell grep '^SHENMA_DOCKER_REPO=' ./.env | cut -d '=' -f 2-)
+SHENMA_DOCKER_HOST  := $(shell grep '^SHENMA_DOCKER_HOST=' ./.env | cut -d '=' -f 2-)
+SHENMA_DOCKER_USER  := $(shell grep '^SHENMA_DOCKER_USER=' ./.env | cut -d '=' -f 2-)
+SHENMA_DOCKER_PASSWORD := $(shell grep '^SHENMA_DOCKER_PASSWORD=' ./.env | cut -d '=' -f 2-)
+UPLOAD_GITHUB := "../upload-docker-images"
+
 #ENV := prod
 EXEEXT ?= 
 ifeq (windows,$(OS))
@@ -33,27 +39,39 @@ package:
 
 # 上传镜像包到dockerhub
 upload_dockerhub:
-	source ./.env && docker tag $(APP):$(VER) $${SHENMA_DOCKER_REPO}/$(APP):$(VER)
-	source ./.env && docker login $${SHENMA_DOCKER_HOST} -u $${SHENMA_DOCKER_USER} -p $${SHENMA_DOCKER_PASSWORD}
-	source ./.env && docker push $${SHENMA_DOCKER_REPO}/$(APP):$(VER)
+	docker tag $(APP):$(VER) $(SHENMA_DOCKER_REPO)/$(APP):$(VER)
+	docker login $(SHENMA_DOCKER_HOST) -u $(SHENMA_DOCKER_USER) -p $(SHENMA_DOCKER_PASSWORD)
+	docker push $(SHENMA_DOCKER_REPO)/$(APP):$(VER)
+
+upload_github:
+	docker tag $(APP):$(VER) zgsm/$(APP):$(VER)
+	docker save -o $(APP)-$(VER).tar zgsm/$(APP):$(VER)
+	mv $(APP)-$(VER).tar $(UPLOAD_GITHUB)/images/
+	@echo -------TODO: upload image to dockerhub-------
+	@echo cd $(UPLOAD_GITHUB)
+	@echo git add images/$(APP)-$(VER).tar
+	@echo git commit -am \"upload zgsm/$(APP):$(VER)\"
+	@echo git push origin main
 
 # 上传镜像包到制品库和前置harbor
 upload: upload_dockerhub
 
+DEPLOY_YAML := "./__$(APP)_$(ENV)_$(VER).yaml"
 # 生成服务部署的YAML配置
-genyaml: 
-	shenma-secret.sh -d $(APP) -p $(ENV) -v $(VER) -t ./$(APP).template.yaml
+genyaml:
+	echo generate $(DEPLOY_YAML) ...
+	bash shenma-secret.sh -d $(APP) -p $(ENV) -v $(VER) -t ./$(APP).template.yaml
 
 # 应用生成的配置
 apply:
-	kubectl delete -f ./__$(APP)_$(ENV)_$(VER).yaml
-	kubectl apply -f ./__$(APP)_$(ENV)_$(VER).yaml
+	kubectl delete -f $(DEPLOY_YAML)
+	kubectl apply -f $(DEPLOY_YAML)
 
 k8s_clean:
-	kubectl delete -f ./__$(APP)_$(ENV)_$(VER).yaml
+	kubectl delete -f $(DEPLOY_YAML)
 
 k8s_create:
-	kubectl apply -f ./__$(APP)_$(ENV)_$(VER).yaml
+	kubectl apply -f $(DEPLOY_YAML)
 
 # 部署
 deploy: package upload genyaml apply

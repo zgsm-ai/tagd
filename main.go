@@ -25,9 +25,10 @@ import (
 // @contact.url http://zgsm.ai
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @BasePath /tagd/api/v1
+// @BasePath /tagd/api
 // @query.collection.format multi
 func main() {
+	printVersions()
 	var c = &common.Config{}
 	// Initialize configuration file
 	if err := c.Init("./env.yaml"); err != nil {
@@ -49,13 +50,27 @@ func main() {
 	db.AutoMigrate(&models.Tag{})
 
 	// Initialize gin router
-	// gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 
 	// Register routes
 	registerRoutes(r, db)
 
 	r.Run(c.Server.ListenAddr)
+}
+
+var SoftwareVer = ""
+var BuildTime = ""
+var BuildTag = ""
+var BuildCommitId = ""
+
+/*
+ * Print software version information
+ */
+func printVersions() {
+	fmt.Printf("Version %s\n", SoftwareVer)
+	fmt.Printf("Build Time: %s\n", BuildTime)
+	fmt.Printf("Build Tag: %s\n", BuildTag)
+	fmt.Printf("Build Commit ID: %s\n", BuildCommitId)
 }
 
 func registerRoutes(r *gin.Engine, db *gorm.DB) {
