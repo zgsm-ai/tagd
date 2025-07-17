@@ -14,7 +14,7 @@ RUN go mod tidy
 RUN go build -ldflags="-s -w" -o tagd *.go
 RUN chmod 755 tagd
 
-FROM alpine:3.21
+FROM alpine:3.21 AS runtime
 ENV env prod
 ENV TZ Asia/Shanghai
 WORKDIR /
